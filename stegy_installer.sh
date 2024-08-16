@@ -66,4 +66,15 @@ for package in stegano zsteg; do
     fi
 done
 
-echo "All dependencies have been installed."
+# Create the wrapper script
+echo "Creating wrapper script..."
+WRAPPER_SCRIPT="/usr/local/bin/stegy"
+cat <<EOF | sudo tee $WRAPPER_SCRIPT
+#!/bin/bash
+python3 /path/to/your/steg_cli.py "\$@"
+EOF
+
+# Make the wrapper script executable
+sudo chmod +x $WRAPPER_SCRIPT
+
+echo "All dependencies have been installed and 'stegy' command is set up."
