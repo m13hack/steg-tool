@@ -13,14 +13,11 @@ RED = "\033[91m"
 # ASCII art for "STEGY"
 ASCII_ART = f"""
 {GREEN}          __                       
-  
-          __                       
   _______/  |_  ____   ____ ___.__.
- /  ___/\   __\/ __ \ / ___<   |  |
- \___ \  |  | \  ___// /_/  >___  |
-/____  > |__|  \___  >___  // ____|
-     \/            \/_____/ \/     
-(v1.0)
+ /  ___/\\   __\\/ __ \\/ ___<   |  |
+ \\___ \\  |  | \\  ___// /_/  >___  |
+/____  > |__|  \\___  >___  // ____|
+     \\/            \\/_____/ \\/     
 {RESET}
 """
 
@@ -37,7 +34,11 @@ def run_command(command):
 def select_file():
     root = tk.Tk()
     root.withdraw()  # Hide the root window
-    file_path = filedialog.askopenfilename(title="Select an Image File", filetypes=[("Image files", "*.png;*.jpg;*.jpeg;*.bmp;*.gif")])
+    file_path = filedialog.askopenfilename(
+        title="Select an Image File",
+        filetypes=[("Image files", "*.png;*.jpg;*.jpeg;*.bmp;*.gif")],
+        initialdir=os.path.expanduser("~")  # Start in the user's home directory
+    )
     return file_path
 
 def main():
