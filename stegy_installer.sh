@@ -11,21 +11,6 @@ MAGENTA="\033[35m"
 ORANGE="\033[33m"
 LIGHT_BLUE="\033[94m"
 
-# Enhanced ASCII art for "STEGY" with different color combinations
-ASCII_ART="${RED}
-             /$$                                  
-            | $$                                  
-  /$$$$$$$ /$$$$$$    /$$$$$$   /$$$$$$  /$$   /$$
- /$$_____/|_  $$_/   /$$__  $$ /$$__  $$| $$  | $$
-|  $$$$$$   | $$    | $$$$$$$$| $$  \ $$| $$  | $$
- \____  $$  | $$ /$$| $$_____/| $$  | $$| $$  | $$
- /$$$$$$$/  |  $$$$/|  $$$$$$$|  $$$$$$$|  $$$$$$$
-|_______/    \___/   \_______/ \____  $$ \____  $$
-                               /$$  \ $$ /$$  | $$
-                              |  $$$$$$/|  $$$$$$/
-                               \______/  \______/ ${RESET}"
-
-echo -e "${ASCII_ART}"
 
 echo -e "${GREEN}Updating package list...${RESET}"
 sudo apt-get update
