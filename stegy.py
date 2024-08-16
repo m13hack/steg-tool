@@ -74,4 +74,58 @@ def main():
     }
     
     if action not in actions:
-        print(f"
+        print(f"{RED}Invalid selection.{RESET}")
+        return
+
+    tool = actions[action]
+
+    if tool == 'all':
+        tools_to_run = ['strings', 'zsteg', 'pngcheck', 'metadata', 'exiftool', 'binwalk', 'formost', 'outguess']
+    else:
+        tools_to_run = [tool]
+    
+    image_path = select_file()
+    
+    if not image_path:
+        print(f"{RED}No file selected.{RESET}")
+        return
+    
+    if not os.path.isfile(image_path):
+        print(f"{RED}File does not exist.{RESET}")
+        return
+
+    for tool in tools_to_run:
+        if tool == 'strings':
+            command = f"strings {image_path}"
+        elif tool == 'zsteg':
+            command = f"zsteg {image_path}"
+        elif tool == 'pngcheck':
+            command = f"pngcheck {image_path}"
+        elif tool == 'metadata':
+            command = f"exiftool {image_path}"
+        elif tool == 'exiftool':
+            command = f"exiftool {image_path}"
+        elif tool == 'binwalk':
+            command = f"binwalk {image_path}"
+        elif tool == 'formost':
+            command = f"formost {image_path}"
+        elif tool == 'outguess':
+            command = f"outguess -k '' {image_path}"
+
+        print(f"{YELLOW}Running {tool}...{RESET}")
+        output = run_command(command)
+        print(f"{GREEN}Command output:{RESET}")
+        print(output)
+
+        log_choice = input(f"{BLUE}Do you want to log this output to a file? (yes/no): {RESET}").strip().lower()
+        if log_choice == 'yes':
+            log_file = input(f"{BLUE}Enter the path for the log file: {RESET}").strip()
+            try:
+                with open(log_file, 'w') as f:
+                    f.write(output)
+                print(f"{GREEN}Output logged to {log_file}.{RESET}")
+            except Exception as e:
+                print(f"{RED}Failed to write log file: {e}{RESET}")
+
+if __name__ == '__main__':
+    main()
