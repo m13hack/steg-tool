@@ -5,8 +5,27 @@ RESET="\033[0m"
 GREEN="\033[92m"
 BLUE="\033[94m"
 YELLOW="\033[93m"
+CYAN="\033[96m"
 RED="\033[91m"
-PURPLE="\033[95m"
+MAGENTA="\033[35m"
+ORANGE="\033[33m"
+LIGHT_BLUE="\033[94m"
+
+# Enhanced ASCII art for "STEGY" with different color combinations
+ASCII_ART="${RED}
+             /$$                                  
+            | $$                                  
+  /$$$$$$$ /$$$$$$    /$$$$$$   /$$$$$$  /$$   /$$
+ /$$_____/|_  $$_/   /$$__  $$ /$$__  $$| $$  | $$
+|  $$$$$$   | $$    | $$$$$$$$| $$  \ $$| $$  | $$
+ \____  $$  | $$ /$$| $$_____/| $$  | $$| $$  | $$
+ /$$$$$$$/  |  $$$$/|  $$$$$$$|  $$$$$$$|  $$$$$$$
+|_______/    \___/   \_______/ \____  $$ \____  $$
+                               /$$  \ $$ /$$  | $$
+                              |  $$$$$$/|  $$$$$$/
+                               \______/  \______/ ${RESET}"
+
+echo -e "${ASCII_ART}"
 
 echo -e "${GREEN}Updating package list...${RESET}"
 sudo apt-get update
@@ -38,7 +57,7 @@ echo -e "${GREEN}Checking Tkinter installation...${RESET}"
 python3 -c "import tkinter" &> /dev/null
 
 if [ $? -eq 0 ]; then
-    echo -e "${PURPLE}Tkinter is installed.${RESET}"
+    echo -e "${MAGENTA}Tkinter is installed.${RESET}"
 else
     echo -e "${YELLOW}Tkinter is not installed. Installing Tkinter...${RESET}"
     sudo apt-get install -y python3-tk
@@ -47,7 +66,7 @@ fi
 echo -e "${GREEN}Verifying installations...${RESET}"
 for tool in steghide pngcheck exiftool binwalk foremost outguess; do
     if command -v $tool &> /dev/null; then
-        echo -e "${PURPLE}$tool is installed.${RESET}"
+        echo -e "${MAGENTA}$tool is installed.${RESET}"
     else
         echo -e "${RED}$tool is not installed.${RESET}"
     fi
@@ -57,7 +76,7 @@ done
 for package in stegano zsteg; do
     python3 -c "import $package" &> /dev/null
     if [ $? -eq 0 ]; then
-        echo -e "${PURPLE}$package Python package is installed.${RESET}"
+        echo -e "${MAGENTA}$package Python package is installed.${RESET}"
     else
         echo -e "${RED}$package Python package is not installed.${RESET}"
     fi
@@ -75,4 +94,4 @@ EOF
 sudo chmod +x $WRAPPER_SCRIPT
 
 echo -e "${GREEN}All dependencies have been installed and 'stegy' command is set up.${RESET}"
-echo -e "${PURPLE}To run the tool, use the command: stegy${RESET}"
+echo -e "${MAGENTA}To run the tool, use the command: stegy${RESET}"
