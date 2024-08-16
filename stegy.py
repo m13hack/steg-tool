@@ -1,24 +1,24 @@
 import subprocess
 import os
-import tkinter as tk
-from tkinter import filedialog
 
 # ANSI color codes
 RESET = "\033[0m"
 GREEN = "\033[92m"
 BLUE = "\033[94m"
 YELLOW = "\033[93m"
+CYAN = "\033[96m"
 RED = "\033[91m"
+PURPLE = "\033[95m"
 
-# ASCII art for "STEGY"
+# Enhanced ASCII art for "STEGY"
 ASCII_ART = f"""
-{GREEN}          __                       
-  _______/  |_  ____   ____ ___.__.
- /  ___/\\   __\\/ __ \\/ ___<   |  |
- \\___ \\  |  | \\  ___// /_/  >___  |
-/____  > |__|  \\___  >___  // ____|
-     \\/            \\/_____/ \\/     
-{RESET}
+{RED}  _______ _______ _______ {PURPLE} __     _______
+{RED} |   _   |   _   |   _   |{PURPLE}|  |   |   _   |
+{RED} |.  |   |.  |   |.  1___|{PURPLE}|  |   |.  |   |
+{RED} |.  |   |.  |   |.  __)_ {PURPLE}|  |___|.  |   |
+{RED} |:  1   |:  1   |:  1   |{PURPLE}|:  1   |:  1   |
+{RED} |::.. . |::.. . |::.. . |{PURPLE}|::.. . |::.. . |
+{RED} `-------`-------`-------'{PURPLE}`-------`-------'{RESET}
 """
 
 def run_command(command):
@@ -27,43 +27,35 @@ def run_command(command):
         if result.returncode == 0:
             return result.stdout
         else:
-            return f"Error: {result.stderr}"
+            return f"{RED}Error:{RESET} {result.stderr}"
     except Exception as e:
-        return f"Error: {e}"
-
-def select_file():
-    root = tk.Tk()
-    root.withdraw()  # Hide the root window
-
-    # Open file dialog in the Desktop directory
-    print(f"Opening directory: {os.path.expanduser('~/Desktop')}")
-    file_path = filedialog.askopenfilename(
-        title="Select an Image File",
-        filetypes=[("Image files", "*.png;*.jpg;*.jpeg;*.bmp;*.gif")],
-        initialdir=os.path.expanduser("~/Desktop")  # Start in the Desktop directory
-    )
-
-    # Open the Desktop directory in Nautilus
-    subprocess.run(f"nautilus ~/Desktop && echo 'Nautilus has been opened in the Desktop directory.'", shell=True)
-
-    return file_path
+        return f"{RED}Error:{RESET} {e}"
 
 def main():
-    # Display ASCII art
+    # Display enhanced ASCII art
     print(ASCII_ART)
 
-    print(f"{BLUE}Select an action:{RESET}")
-    print("1. Strings Extract")
-    print("2. Z-Steganography")
-    print("3. PNGCheck")
-    print("4. Metadata Extraction")
-    print("5. ExifTool")
-    print("6. Binwalk")
-    print("7. Formost")
-    print("8. Outguess")
-    print("9. All")
+    print(f"{CYAN}Welcome to Stegy!{RESET}")
+    print(f"{YELLOW}Please specify the full path to the image file you want to analyze.{RESET}")
     
-    action = input("Enter the number of the action you want to perform: ")
+    image_path = input(f"{BLUE}Enter the image file path: {RESET}").strip()
+    
+    if not os.path.isfile(image_path):
+        print(f"{RED}File does not exist or invalid path.{RESET}")
+        return
+
+    print(f"{BLUE}Select an action:{RESET}")
+    print(f"{CYAN}1. Strings Extract{RESET}")
+    print(f"{CYAN}2. Z-Steganography{RESET}")
+    print(f"{CYAN}3. PNGCheck{RESET}")
+    print(f"{CYAN}4. Metadata Extraction{RESET}")
+    print(f"{CYAN}5. ExifTool{RESET}")
+    print(f"{CYAN}6. Binwalk{RESET}")
+    print(f"{CYAN}7. Formost{RESET}")
+    print(f"{CYAN}8. Outguess{RESET}")
+    print(f"{CYAN}9. Run All{RESET}")
+    
+    action = input(f"{PURPLE}Enter the number of the action you want to perform: {RESET}")
 
     actions = {
         '1': 'strings',
@@ -87,16 +79,6 @@ def main():
         tools_to_run = ['strings', 'zsteg', 'pngcheck', 'metadata', 'exiftool', 'binwalk', 'formost', 'outguess']
     else:
         tools_to_run = [tool]
-    
-    image_path = select_file()
-    
-    if not image_path:
-        print(f"{RED}No file selected.{RESET}")
-        return
-    
-    if not os.path.isfile(image_path):
-        print(f"{RED}File does not exist.{RESET}")
-        return
 
     for tool in tools_to_run:
         if tool == 'strings':
@@ -105,9 +87,7 @@ def main():
             command = f"zsteg {image_path}"
         elif tool == 'pngcheck':
             command = f"pngcheck {image_path}"
-        elif tool == 'metadata':
-            command = f"exiftool {image_path}"
-        elif tool == 'exiftool':
+        elif tool == 'metadata' or tool == 'exiftool':
             command = f"exiftool {image_path}"
         elif tool == 'binwalk':
             command = f"binwalk {image_path}"
