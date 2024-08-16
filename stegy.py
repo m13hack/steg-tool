@@ -1,5 +1,7 @@
 import subprocess
 import os
+import tkinter as tk
+from tkinter import filedialog
 
 def run_command(command):
     try:
@@ -10,6 +12,12 @@ def run_command(command):
             return f"Error: {result.stderr}"
     except Exception as e:
         return f"Error: {e}"
+
+def select_file():
+    root = tk.Tk()
+    root.withdraw()  # Hide the root window
+    file_path = filedialog.askopenfilename(title="Select an Image File", filetypes=[("Image files", "*.png;*.jpg;*.jpeg;*.bmp;*.gif")])
+    return file_path
 
 def main():
     print("Select an action:")
@@ -40,7 +48,11 @@ def main():
         return
 
     tool = actions[action]
-    image_path = input("Enter the path to the image file: ")
+    image_path = select_file()
+    
+    if not image_path:
+        print("No file selected.")
+        return
     
     if not os.path.isfile(image_path):
         print("File does not exist.")
