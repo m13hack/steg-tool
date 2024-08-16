@@ -56,4 +56,14 @@ for tool in steghide pngcheck exiftool binwalk formost outguess; do
     fi
 done
 
+# Verify Python package installations
+for package in stegano zsteg; do
+    python3 -c "import $package" &> /dev/null
+    if [ $? -eq 0 ]; then
+        echo "$package Python package is installed."
+    else
+        echo "$package Python package is not installed."
+    fi
+done
+
 echo "All dependencies have been installed."
