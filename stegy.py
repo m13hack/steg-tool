@@ -42,6 +42,10 @@ def select_file():
         filetypes=[("Image files", "*.png;*.jpg;*.jpeg;*.bmp;*.gif")],
         initialdir=os.path.expanduser("~/Desktop")  # Start in the Desktop directory
     )
+
+    # Open the Desktop directory in Nautilus
+    subprocess.run(f"nautilus ~/Desktop && echo 'Nautilus has been opened in the Desktop directory.'", shell=True)
+
     return file_path
 
 def main():
