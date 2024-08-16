@@ -35,6 +35,17 @@ sudo apt-get install -y formost
 echo "Installing outguess..."
 sudo apt-get install -y outguess
 
+# Check if Tkinter is installed (for GUI file dialogs)
+echo "Checking Tkinter installation..."
+python3 -c "import tkinter" &> /dev/null
+
+if [ $? -eq 0 ]; then
+    echo "Tkinter is installed."
+else
+    echo "Tkinter is not installed. Installing Tkinter..."
+    sudo apt-get install -y python3-tk
+fi
+
 # Verify installations
 echo "Verifying installations..."
 for tool in steghide pngcheck exiftool binwalk formost outguess; do
