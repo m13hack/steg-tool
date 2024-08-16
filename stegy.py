@@ -9,16 +9,23 @@ YELLOW = "\033[93m"
 CYAN = "\033[96m"
 RED = "\033[91m"
 PURPLE = "\033[95m"
+MAGENTA = "\033[35m"
+ORANGE = "\033[33m"
+LIGHT_BLUE = "\033[94m"
 
-# Enhanced ASCII art for "STEGY"
+# Enhanced ASCII art for "STEGY" with different color combinations
 ASCII_ART = f"""
-{RED}  _______ _______ _______ {PURPLE} __     _______
-{RED} |   _   |   _   |   _   |{PURPLE}|  |   |   _   |
-{RED} |.  |   |.  |   |.  1___|{PURPLE}|  |   |.  |   |
-{RED} |.  |   |.  |   |.  __)_ {PURPLE}|  |___|.  |   |
-{RED} |:  1   |:  1   |:  1   |{PURPLE}|:  1   |:  1   |
-{RED} |::.. . |::.. . |::.. . |{PURPLE}|::.. . |::.. . |
-{RED} `-------`-------`-------'{PURPLE}`-------`-------'{RESET}
+{RED}             /$$                                  
+{MAGENTA}            | $$                                  
+{CYAN}  /$$$$$$$ /$$$$$$    /$$$$$$   /$$$$$$  /$$   /$$
+{YELLOW} /$$_____/|_  $$_/   /$$__  $$ /$$__  $$| $$  | $$
+{GREEN}|  $$$$$$   | $$    | $$$$$$$$| $$  \ $$| $$  | $$
+{BLUE} \____  $$  | $$ /$$| $$_____/| $$  | $$| $$  | $$
+{ORANGE} /$$$$$$$/  |  $$$$/|  $$$$$$$|  $$$$$$$|  $$$$$$$
+{LIGHT_BLUE}|_______/    \___/   \_______/ \____  $$ \____  $$
+{PURPLE}                               /$$  \ $$ /$$  | $$
+{RED}                              |  $$$$$$/|  $$$$$$/
+{MAGENTA}                               \______/  \______/ {RESET}
 """
 
 def run_command(command):
@@ -31,8 +38,12 @@ def run_command(command):
     except Exception as e:
         return f"{RED}Error:{RESET} {e}"
 
+def check_tool_availability(tool_name):
+    """Check if a command-line tool is installed and available."""
+    return subprocess.call(f"command -v {tool_name}", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) == 0
+
 def main():
-    # Display enhanced ASCII art
+    # Display ASCII art
     print(ASCII_ART)
 
     print(f"{CYAN}Welcome to Stegy!{RESET}")
@@ -81,6 +92,10 @@ def main():
         tools_to_run = [tool]
 
     for tool in tools_to_run:
+        if not check_tool_availability(tool):
+            print(f"{RED}Tool '{tool}' is not installed or not found in PATH.{RESET}")
+            continue
+
         if tool == 'strings':
             command = f"strings {image_path}"
         elif tool == 'zsteg':
