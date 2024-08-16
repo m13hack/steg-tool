@@ -1,37 +1,48 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analysis Results</title>
-</head>
-<body>
-    <h1>Analysis Results</h1>
+#!/bin/bash
 
-    <h2>Strings:</h2>
-    <pre>{{ results['Strings'] }}</pre>
+# Update package list
+echo "Updating package list..."
+sudo apt-get update
 
-    <h2>Steghide:</h2>
-    <pre>{{ results['Steghide'] }}</pre>
+# Install Python packages
+echo "Installing Python packages..."
+pip install stegano zsteg
 
-    <h2>Outguess:</h2>
-    <pre>{{ results['Outguess'] }}</pre>
+# Install command-line tools
+echo "Installing command-line tools..."
 
-    <h2>Binwalk:</h2>
-    <pre>{{ results['Binwalk'] }}</pre>
+# Install Steghide
+echo "Installing steghide..."
+sudo apt-get install -y steghide
 
-    <h2>Exiftool:</h2>
-    <pre>{{ results['Exiftool'] }}</pre>
+# Install PNGCheck
+echo "Installing pngcheck..."
+sudo apt-get install -y pngcheck
 
-    <h2>Foremost:</h2>
-    <pre>{{ results['Foremost'] }}</pre>
+# Install ExifTool
+echo "Installing exiftool..."
+sudo apt-get install -y exiftool
 
-    <h2>Pngcheck:</h2>
-    <pre>{{ results['Pngcheck'] }}</pre>
+# Install Binwalk
+echo "Installing binwalk..."
+sudo apt-get install -y binwalk
 
-    <h2>Metadata:</h2>
-    <pre>{{ results['Metadata'] }}</pre>
+# Install Formost
+echo "Installing formost..."
+sudo apt-get install -y formost
 
-    <a href="/">Upload another file</a>
-</body>
-</html>
+# Install Outguess
+echo "Installing outguess..."
+sudo apt-get install -y outguess
+
+# Verify installations
+echo "Verifying installations..."
+for tool in steghide pngcheck exiftool binwalk formost outguess; do
+    if command -v $tool &> /dev/null; then
+        echo "$tool is installed."
+    else
+        echo "$tool is not installed."
+    fi
+done
+
+echo "All dependencies have been installed."
