@@ -29,6 +29,24 @@ install_with_apt() {
     fi
 }
 
+# Function to install foremost manually if not available via apt
+install_foremost_manually() {
+    echo -e "${YELLOW}Foremost package not found in apt repositories. Installing manually...${RESET}"
+    cd /tmp
+    wget http://foremost.sourceforge.net/pkg/foremost-1.5.7.tar.gz
+    tar -xvzf foremost-1.5.7.tar.gz
+    cd foremost-1.5.7
+    make
+    sudo make install
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}Foremost installation completed manually.${RESET}"
+    else
+        echo -e "${RED}Failed to install Foremost manually.${RESET}"
+    fi
+    cd ..
+    rm -rf foremost-1.5.7 foremost-1.5.7.tar.gz
+}
+
 # Function to install a Python package
 install_python_package() {
     echo -e "${YELLOW}Installing Python package $1...${RESET}"
@@ -52,11 +70,19 @@ install_gem_package() {
 }
 
 # Check and install required tools
-tools=("strings" "pngcheck" "exiftool" "binwalk" "formost" "outguess" "ruby")
+tools=("strings" "pngcheck" "exiftool" "binwalk" "outguess" "ruby")
 
 for tool in "${tools[@]}"; do
     check_installation "$tool" || install_with_apt "$tool"
 done
+
+# Special handling for foremost
+if ! check_installation "foremost"; then
+    install_with_apt "foremost"
+    if [ $? -ne 0 ]; then
+        install_foremost_manually
+    fi
+fi
 
 # Check and install Python packages
 python_packages=("foremost")
