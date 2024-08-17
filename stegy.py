@@ -64,9 +64,9 @@ def main():
     print(f"{CYAN}6. Binwalk{RESET}")
     print(f"{CYAN}7. Formost{RESET}")
     print(f"{CYAN}8. Outguess{RESET}")
-    print(f"{CYAN}9. Cat File Content{RESET}")
-    print(f"{CYAN}10. Stegano Extraction{RESET}")
-    print(f"{CYAN}11. Grep for Patterns{RESET}")
+    print(f"{CYAN}9. Cat{RESET}")
+    print(f"{CYAN}10. Stegano (steg){RESET}")
+    print(f"{CYAN}11. Grep{RESET}")
     print(f"{CYAN}12. Run All{RESET}")
     
     action = input(f"{PURPLE}Enter the number of the action you want to perform: {RESET}")
@@ -98,7 +98,7 @@ def main():
         tools_to_run = [tool]
 
     for tool in tools_to_run:
-        if not check_tool_availability(tool):
+        if not check_tool_availability(tool) and tool != 'steg':
             print(f"{RED}Tool '{tool}' is not installed or not found in PATH.{RESET}")
             continue
 
@@ -117,24 +117,33 @@ def main():
         elif tool == 'outguess':
             command = f"outguess -k '' {image_path}"
         elif tool == 'cat':
-            command = f"cat {image_path}"
+            try:
+                with open(image_path, 'rb') as file:
+                    content = file.read()
+                command = None
+                print(f"{GREEN}Command output:{RESET}")
+                print(content.decode('utf-8', errors='replace'))
+            except Exception as e:
+                print(f"{RED}Error:{RESET} {e}")
+                continue
         elif tool == 'steg':
-            command = f"stegano-lsb reveal -i {image_path}"
+            command = f"python3 -m stegano {image_path}"
         elif tool == 'grep':
-            pattern = input(f"{BLUE}Enter the pattern to grep for: {RESET}").strip()
+            pattern = input(f"{YELLOW}Enter the pattern to grep for: {RESET}").strip()
             command = f"grep '{pattern}' {image_path}"
 
-        print(f"{YELLOW}Running {tool}...{RESET}")
-        output = run_command(command)
-        print(f"{GREEN}Command output:{RESET}")
-        print(output)
+        if command:
+            print(f"{YELLOW}Running {tool}...{RESET}")
+            output = run_command(command)
+            print(f"{GREEN}Command output:{RESET}")
+            print(output)
 
         log_choice = input(f"{BLUE}Do you want to log this output to a file? (yes/no): {RESET}").strip().lower()
         if log_choice == 'yes':
             log_file = input(f"{BLUE}Enter the path for the log file: {RESET}").strip()
             try:
                 with open(log_file, 'w') as f:
-                    f.write(output)
+                    f.write(output if command else content.decode('utf-8', errors='replace'))
                 print(f"{GREEN}Output logged to {log_file}.{RESET}")
             except Exception as e:
                 print(f"{RED}Failed to write log file: {e}{RESET}")
