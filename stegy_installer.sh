@@ -11,41 +11,49 @@ MAGENTA="\033[35m"
 ORANGE="\033[33m"
 LIGHT_BLUE="\033[94m"
 
+error_exit() {
+    echo -e "${RED}Error: $1${RESET}"
+    exit 1
+}
+
+install_package() {
+    package=$1
+    echo -e "${BLUE}Installing $package...${RESET}"
+    if ! sudo apt-get install -y "$package"; then
+        echo -e "${YELLOW}Retrying installation with --force-confnew option...${RESET}"
+        sudo apt-get install -y "$package" -o Dpkg::Options::="--force-confnew" || error_exit "Failed to install $package"
+    fi
+}
+
+install_python_package() {
+    package=$1
+    echo -e "${BLUE}Installing Python package $package...${RESET}"
+    if ! pip install "$package"; then
+        error_exit "Failed to install Python package $package"
+    fi
+}
 
 echo -e "${GREEN}Updating package list...${RESET}"
-sudo apt-get update
+sudo apt-get update || error_exit "Failed to update package list"
 
 echo -e "${GREEN}Installing Python packages...${RESET}"
-pip install stegano zsteg
+install_python_package stegano
+install_python_package zsteg
 
 echo -e "${GREEN}Installing command-line tools...${RESET}"
-
-echo -e "${BLUE}Installing Steghide...${RESET}"
-sudo apt-get install -y steghide
-
-echo -e "${BLUE}Installing PNGCheck...${RESET}"
-sudo apt-get install -y pngcheck
-
-echo -e "${BLUE}Installing ExifTool...${RESET}"
-sudo apt-get install -y exiftool
-
-echo -e "${BLUE}Installing Binwalk...${RESET}"
-sudo apt-get install -y binwalk
-
-echo -e "${BLUE}Installing Formost...${RESET}"
-sudo apt-get install -y foremost
-
-echo -e "${BLUE}Installing Outguess...${RESET}"
-sudo apt-get install -y outguess
+install_package steghide
+install_package pngcheck
+install_package exiftool
+install_package binwalk
+install_package foremost
+install_package outguess
 
 echo -e "${GREEN}Checking Tkinter installation...${RESET}"
-python3 -c "import tkinter" &> /dev/null
-
-if [ $? -eq 0 ]; then
-    echo -e "${MAGENTA}Tkinter is installed.${RESET}"
-else
+if ! python3 -c "import tkinter" &> /dev/null; then
     echo -e "${YELLOW}Tkinter is not installed. Installing Tkinter...${RESET}"
-    sudo apt-get install -y python3-tk
+    install_package python3-tk
+else
+    echo -e "${MAGENTA}Tkinter is already installed.${RESET}"
 fi
 
 echo -e "${GREEN}Verifying installations...${RESET}"
@@ -53,30 +61,29 @@ for tool in steghide pngcheck exiftool binwalk foremost outguess; do
     if command -v $tool &> /dev/null; then
         echo -e "${MAGENTA}$tool is installed.${RESET}"
     else
-        echo -e "${RED}$tool is not installed.${RESET}"
+        error_exit "$tool is not installed"
     fi
 done
 
 # Verify Python package installations
 for package in stegano zsteg; do
-    python3 -c "import $package" &> /dev/null
-    if [ $? -eq 0 ]; then
+    if python3 -c "import $package" &> /dev/null; then
         echo -e "${MAGENTA}$package Python package is installed.${RESET}"
     else
-        echo -e "${RED}$package Python package is not installed.${RESET}"
+        error_exit "$package Python package is not installed"
     fi
 done
 
 # Create the wrapper script
 WRAPPER_SCRIPT="/usr/local/bin/stegy"
 echo -e "${GREEN}Creating wrapper script...${RESET}"
-cat <<EOF | sudo tee $WRAPPER_SCRIPT
+sudo tee $WRAPPER_SCRIPT > /dev/null <<EOF
 #!/bin/bash
 python3 /path/to/your/steg_cli.py "\$@"
 EOF
 
 # Make the wrapper script executable
-sudo chmod +x $WRAPPER_SCRIPT
+sudo chmod +x $WRAPPER_SCRIPT || error_exit "Failed to make wrapper script executable"
 
 echo -e "${GREEN}All dependencies have been installed and 'stegy' command is set up.${RESET}"
 echo -e "${MAGENTA}To run the tool, use the command: stegy${RESET}"
