@@ -11,7 +11,6 @@ MAGENTA="\033[35m"
 ORANGE="\033[33m"
 LIGHT_BLUE="\033[94m"
 
-
 echo -e "${GREEN}Updating package list...${RESET}"
 sudo apt-get update
 
@@ -38,6 +37,20 @@ sudo apt-get install -y foremost
 echo -e "${BLUE}Installing Outguess...${RESET}"
 sudo apt-get install -y outguess
 
+echo -e "${BLUE}Installing Grep...${RESET}"
+sudo apt-get install -y grep
+
+echo -e "${BLUE}Installing Cat...${RESET}"
+# Note: `cat` is typically pre-installed on Unix-like systems.
+# This is a placeholder to emphasize its requirement.
+if ! command -v cat &> /dev/null; then
+    echo -e "${YELLOW}Cat command is missing. Installing coreutils to get cat...${RESET}"
+    sudo apt-get install -y coreutils
+fi
+
+echo -e "${BLUE}Installing Stegano (steg)...${RESET}"
+pip install stegano
+
 echo -e "${GREEN}Checking Tkinter installation...${RESET}"
 python3 -c "import tkinter" &> /dev/null
 
@@ -49,7 +62,7 @@ else
 fi
 
 echo -e "${GREEN}Verifying installations...${RESET}"
-for tool in steghide pngcheck exiftool binwalk foremost outguess; do
+for tool in steghide pngcheck exiftool binwalk foremost outguess grep cat; do
     if command -v $tool &> /dev/null; then
         echo -e "${MAGENTA}$tool is installed.${RESET}"
     else
