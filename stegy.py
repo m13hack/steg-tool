@@ -64,7 +64,10 @@ def main():
     print(f"{CYAN}6. Binwalk{RESET}")
     print(f"{CYAN}7. Formost{RESET}")
     print(f"{CYAN}8. Outguess{RESET}")
-    print(f"{CYAN}9. Run All{RESET}")
+    print(f"{CYAN}9. Cat File Content{RESET}")
+    print(f"{CYAN}10. Stegano Extraction{RESET}")
+    print(f"{CYAN}11. Grep for Patterns{RESET}")
+    print(f"{CYAN}12. Run All{RESET}")
     
     action = input(f"{PURPLE}Enter the number of the action you want to perform: {RESET}")
 
@@ -77,7 +80,10 @@ def main():
         '6': 'binwalk',
         '7': 'formost',
         '8': 'outguess',
-        '9': 'all'
+        '9': 'cat',
+        '10': 'steg',
+        '11': 'grep',
+        '12': 'all'
     }
     
     if action not in actions:
@@ -87,7 +93,7 @@ def main():
     tool = actions[action]
 
     if tool == 'all':
-        tools_to_run = ['strings', 'zsteg', 'pngcheck', 'metadata', 'exiftool', 'binwalk', 'formost', 'outguess']
+        tools_to_run = ['strings', 'zsteg', 'pngcheck', 'metadata', 'exiftool', 'binwalk', 'formost', 'outguess', 'cat', 'steg', 'grep']
     else:
         tools_to_run = [tool]
 
@@ -110,6 +116,13 @@ def main():
             command = f"formost {image_path}"
         elif tool == 'outguess':
             command = f"outguess -k '' {image_path}"
+        elif tool == 'cat':
+            command = f"cat {image_path}"
+        elif tool == 'steg':
+            command = f"stegano-lsb reveal -i {image_path}"
+        elif tool == 'grep':
+            pattern = input(f"{BLUE}Enter the pattern to grep for: {RESET}").strip()
+            command = f"grep '{pattern}' {image_path}"
 
         print(f"{YELLOW}Running {tool}...{RESET}")
         output = run_command(command)
