@@ -1,89 +1,77 @@
 #!/bin/bash
 
-# ANSI color codes for styling
+# ANSI color codes for better readability in the terminal
 RESET="\033[0m"
 GREEN="\033[92m"
-BLUE="\033[94m"
 YELLOW="\033[93m"
-CYAN="\033[96m"
 RED="\033[91m"
-MAGENTA="\033[35m"
-ORANGE="\033[33m"
-LIGHT_BLUE="\033[94m"
 
-error_exit() {
-    echo -e "${RED}Error: $1${RESET}"
-    exit 1
-}
-
-install_package() {
-    package=$1
-    echo -e "${BLUE}Installing $package...${RESET}"
-    if ! sudo apt-get install -y "$package"; then
-        echo -e "${YELLOW}Retrying installation with --force-confnew option...${RESET}"
-        sudo apt-get install -y "$package" -o Dpkg::Options::="--force-confnew" || error_exit "Failed to install $package"
+# Function to check the installation status of a tool
+check_installation() {
+    if ! command -v "$1" &> /dev/null; then
+        echo -e "${RED}$1 is not installed.${RESET}"
+        return 1
+    else
+        echo -e "${GREEN}$1 is already installed.${RESET}"
+        return 0
     fi
 }
 
+# Function to install a tool using apt
+install_with_apt() {
+    echo -e "${YELLOW}Installing $1...${RESET}"
+    sudo apt-get update
+    sudo apt-get install -y "$1"
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}$1 installation completed.${RESET}"
+    else
+        echo -e "${RED}Failed to install $1.${RESET}"
+    fi
+}
+
+# Function to install a Python package
 install_python_package() {
-    package=$1
-    echo -e "${BLUE}Installing Python package $package...${RESET}"
-    if ! pip install "$package"; then
-        error_exit "Failed to install Python package $package"
+    echo -e "${YELLOW}Installing Python package $1...${RESET}"
+    pip3 install "$1"
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}Python package $1 installation completed.${RESET}"
+    else
+        echo -e "${RED}Failed to install Python package $1.${RESET}"
     fi
 }
 
-echo -e "${GREEN}Updating package list...${RESET}"
-sudo apt-get update || error_exit "Failed to update package list"
-
-echo -e "${GREEN}Installing Python packages...${RESET}"
-install_python_package stegano
-install_python_package zsteg
-
-echo -e "${GREEN}Installing command-line tools...${RESET}"
-install_package steghide
-install_package pngcheck
-install_package exiftool
-install_package binwalk
-install_package foremost
-install_package outguess
-
-echo -e "${GREEN}Checking Tkinter installation...${RESET}"
-if ! python3 -c "import tkinter" &> /dev/null; then
-    echo -e "${YELLOW}Tkinter is not installed. Installing Tkinter...${RESET}"
-    install_package python3-tk
-else
-    echo -e "${MAGENTA}Tkinter is already installed.${RESET}"
-fi
-
-echo -e "${GREEN}Verifying installations...${RESET}"
-for tool in steghide pngcheck exiftool binwalk foremost outguess; do
-    if command -v $tool &> /dev/null; then
-        echo -e "${MAGENTA}$tool is installed.${RESET}"
+# Function to install a Ruby gem package
+install_gem_package() {
+    echo -e "${YELLOW}Installing Ruby gem $1...${RESET}"
+    sudo gem install "$1"
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}Ruby gem $1 installation completed.${RESET}"
     else
-        error_exit "$tool is not installed"
+        echo -e "${RED}Failed to install Ruby gem $1.${RESET}"
     fi
+}
+
+# Check and install required tools
+tools=("strings" "pngcheck" "exiftool" "binwalk" "formost" "outguess" "ruby")
+
+for tool in "${tools[@]}"; do
+    check_installation "$tool" || install_with_apt "$tool"
 done
 
-# Verify Python package installations
-for package in stegano zsteg; do
-    if python3 -c "import $package" &> /dev/null; then
-        echo -e "${MAGENTA}$package Python package is installed.${RESET}"
-    else
-        error_exit "$package Python package is not installed"
-    fi
+# Check and install Python packages
+python_packages=("foremost")
+
+for package in "${python_packages[@]}"; do
+    check_installation "pip3" || install_with_apt "python3-pip"
+    install_python_package "$package"
 done
 
-# Create the wrapper script
-WRAPPER_SCRIPT="/usr/local/bin/stegy"
-echo -e "${GREEN}Creating wrapper script...${RESET}"
-sudo tee $WRAPPER_SCRIPT > /dev/null <<EOF
-#!/bin/bash
-python3 /path/to/your/steg_cli.py "\$@"
-EOF
+# Check and install Ruby gem packages
+gem_packages=("zsteg")
 
-# Make the wrapper script executable
-sudo chmod +x $WRAPPER_SCRIPT || error_exit "Failed to make wrapper script executable"
+for gem in "${gem_packages[@]}"; do
+    check_installation "gem" || install_with_apt "ruby"
+    install_gem_package "$gem"
+done
 
-echo -e "${GREEN}All dependencies have been installed and 'stegy' command is set up.${RESET}"
-echo -e "${MAGENTA}To run the tool, use the command: stegy${RESET}"
+echo -e "${GREEN}All installations and checks are complete.${RESET}"
