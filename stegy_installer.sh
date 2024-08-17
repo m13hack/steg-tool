@@ -36,7 +36,7 @@ install_foremost_manually() {
     wget http://foremost.sourceforge.net/pkg/foremost-1.5.7.tar.gz
     tar -xvzf foremost-1.5.7.tar.gz
     cd foremost-1.5.7
-    make
+    sudo make
     sudo make install
     if [ $? -eq 0 ]; then
         echo -e "${GREEN}Foremost installation completed manually.${RESET}"
@@ -85,7 +85,7 @@ if ! check_installation "foremost"; then
 fi
 
 # Check and install Python packages
-python_packages=("foremost")
+python_packages=("stegano")
 
 for package in "${python_packages[@]}"; do
     check_installation "pip3" || install_with_apt "python3-pip"
