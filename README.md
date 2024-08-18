@@ -16,14 +16,15 @@ Setting up Stegy is a breeze. Follow these simple steps:
 1. **Clone the Repository:**
 
    ```bash
-   git clone https://github.com/yourusername/stegy.git
+   git clone https://github.com/m13hack/steg-tool.git
    cd stegy
    ```
 
 2. **Run the Installer Script:**
 
    ```bash
-   sudo bash install.sh
+   chmod +x stegy_insatller_installer.sh
+   ./stegy_installer.sh
    ```
 
    This script will handle all the heavy lifting – installing dependencies and creating the `stegy` command for you to use.
@@ -35,10 +36,14 @@ Ready to dive in? Just run the tool and follow the prompts:
 1. **Launch Stegy:**
 
    ```bash
-   stegy
+   python stegy.py
    ```
 
 2. **Input your file path and choose from the array of actions to start analyzing.**
+##example:
+```bash
+\home\user\Downloads\image.png
+```
 
 ## 🛠️ Actions
 
